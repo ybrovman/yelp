@@ -1,0 +1,262 @@
+<HTML>
+<HEAD>
+<TITLE>Yelp business reviews category classification and sentiment analysis</TITLE>
+</HEAD>
+
+<BODY>
+<CENTER>
+<H1>Yelp business reviews category classification and sentiment analysis</H1>
+<H3>by Yuri Brovman, PhD</H3>
+
+<img src="yelp.jpg">
+<p></p>
+<table width = "800">
+	<tr><td>
+		<CENTER>
+<p align="left"><b>Goal:</b> The goal of this project is to build a recommendation system based on the textual content of Yelp business reviews in order to keep the user engaged with the website for a longer period of time. </p>
+
+<p align="left"><b>Data/Code:</b> Yelp released an excellent set of business, user, and review <a href="http://www.yelp.com/dataset_challenge">data</a> for the Phoenix, AZ area. The code for the project is on <a href="https://github.com/ybrovman/yelp">GitHub</a>.</p>
+
+<p align="left"><b>Motivation:</b> I am very interested in the interaction between consumers and businesses and how this relates to the e-commerce economy of the 21st century. Written customer reviews provide essential feedback for a wide range of products and services. I wanted to explore NLP techniques and be able to predict the sentiment and category of the review from processing the textual information. I believe accurately processing unstructured data to extract business insight will be an ever more powerful tool in the economy of the 21st century.</p>
+
+<p align="left"><b>Classifier:</b> I inserted the JSON data into a SQLite database creating a schema that is optimal for category classification. I built a classification system using the Python scikit-learn and NLTK libraries. The features in my classifier were stemmed unigram and bigram TFIDF values. I used an ensemble classifier combining the output of Multinomial Naive Bayes, Logistic Regression, and Random Forest classifiers, that performed better than the classifiers individually.
+</p>
+<p  align="left">	
+To train the <b>sentiment classifier</b>, I used the 5 star reviews as the 'Positive' class and 1 star review for the 'Negative' class. To cross validate the performance of the model I used 5 classes assigning reviews for 5 star as 'Positive', 4 star as 'Positive', 3 star as 'Negative', 2 star as 'Negative', and 1 star as 'Negative'. The cross validation accuracy scores are listed below. As expected the classifier performs quite well for 1 and 5 star classes, reasonably for 2 and 4 star classes, and poorly for the 3 star class. 
+</p>
+
+<table border="0" cellpadding=3 cellspacing=0 >
+  <thead>
+    <tr style="text-align: right;">
+      <th>Star Rating</th>
+      <th>Accuracy</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>0.9614</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.8305</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.4418</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.8835</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.9499</td>
+    </tr>
+  </tbody>
+</table>
+
+<p  align="left">	
+To train the <b>category classifier</b>, I picked the top 5 categories of businesses: Restaurants, Food, Shopping, BeautyandSpas, and ActiveLife. The cross validation precision and recall scores for the ensemble classifier are shown below. The classifier performed quite well with precision and recall scores in 90% range. Misclassified reviews tended to be shorter and use more common words. 
+</p>
+
+<table border="0" cellpadding=3 cellspacing=0 >
+  <thead>
+    <tr style="text-align: right;">
+      <th>Category</th>
+      <th>Precision</th>
+	  <th>Recall</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="text-align: right;">
+      <th>Restaurants</th>
+      <td style="text-align: center;">0.990</td>
+	  <td style="text-align: center;">0.970588</td>
+    </tr>
+    <tr style="text-align: right;">
+      <th>Food</th>
+      <td style="text-align: center;">0.941</td>
+	  <td style="text-align: center;">0.976141</td>
+    </tr>
+    <tr style="text-align: right;">
+      <th>Shopping</th>
+      <td style="text-align: center;">0.970</td>
+	  <td style="text-align: center;">0.960396</td>
+    </tr>
+    <tr style="text-align: right;">
+      <th>BeautyandSpas</th>
+      <td style="text-align: center;">0.988</td>
+	  <td style="text-align: center;">0.980159</td>
+    </tr>
+    <tr style="text-align: right;">
+      <th>ActiveLife</th>
+      <td style="text-align: center;">0.984</td>
+	  <td style="text-align: center;">0.985972</td>
+    </tr>
+  </tbody>
+</table>
+
+<p align="left">When a user is writing a review, the recommendation system would automatically classify the sentiment and category of the review. Below is an example of a typical review and the probability scores for the sentiment and category classifiers. 
+</p>
+
+<p align="left"><b>Recommender:</b> Part of the dataset includes a <b>tip history</b> (short pieces of advice that are not full reviews) a user has left for specific businesses. I used the cosine similarity between reviews using the category TFIDF features to recommend businesses where the user <b>left a tip but did not leave a full review</b>, in order to encourage the user to write a full review. The idea would be to <b>keep the user engaged</b> on the website as long as posible to be able to serve more advertising impressions to them. 
+</p>
+
+<h4 align="left">Example User 1:</h4>
+<table border="0" cellpadding=5 cellspacing=0 width="700" style="border:1px solid black;">
+  <thead>
+    <tr style="text-align: left;" bgcolor="#99FF99">
+      <th>Business Name:</th>
+	  <th>Review Stars:</th>
+	  <th>Review Category Label:</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="text-align: left;">
+      <td>Nordstrom Rack</td>
+	  <td>4</td>
+	  <td>Shopping</td>
+    </tr>
+	<tr style="text-align: left;" bgcolor="#99FF99">
+		<th colspan="3">Review Text:</th>
+	</tr>
+	
+	<tr>
+		<td colspan="3"> I love a good bargain I really do !  I love a bargain on great quality  stuff even better.  Sometimes the Rack is  a huge disappointment , no deals,  clothing that doesn't  "hit" me,  and  blah<br><br>
+
+But not tonight kids!  We had a great time shopping.  Bought several items for cheap , ata fraction of the cost in Nordstroms. <br><br>
+
+It seems to me the best way to shop at The rack is with no agenda.  When we go in looking for a specific item , it's never found. But go in check out the racks and you will find surprises.  Many items will have tags with 30-50%  off the last item markdown. For instance a 140.00 jacket had been marked down several times and with 35% off, I got it for 14.00 bucks.  You just never know!
+		</td>
+	</tr>
+	<tr style="text-align: left;" bgcolor="#CACAFF">
+	<th>Sentiment Classifier ( probability ):</th>
+	<th colspan="3">Category Classifier ( probability ):</th>
+	</tr>
+	<tr style="text-align: left;">
+	<td>
+		<table border="0" cellpadding=5 cellspacing=0><tr style="text-align: center;">
+			<td>Negative</td><td>Positive</td></tr>
+			<tr style="text-align: center;">
+			<td>0.29</td><td>0.71</td></tr>
+		</table>
+	</td>
+	<td colspan="2">
+		<table border="0" cellpadding=5 cellspacing=0><tr style="text-align: center;">
+			<td>Restaurants</td><td>Food</td><td  bgcolor="#FFC848">Shopping</td><td>BeautyandSpas</td><td>ActiveLife</td></tr>
+			<tr style="text-align: center;">
+			<td>0.01</td><td>0.02</td><td  bgcolor="#FFC848">0.94</td><td>0.02</td><td>0.01</td></tr>
+		</table>
+		</td>
+	</tr>
+	<tr style="text-align: left;" bgcolor="#CACAFF">
+		<th colspan="3">Recommendations:</th>
+	</tr>
+	<tr style="text-align: left;"><td colspan="3">
+		<table border="0" cellpadding=5 cellspacing=0>
+			<tr  style="text-align: left;"><th>Business Name</th><th>Category</th></tr>
+			<tr><td>Arrowhead Towne Center</td><td>Shopping</td></tr>
+			<tr><td>Yogurtland</td><td>Food</td></tr>
+			<tr><td>Castles N' Coasters</td><td>ActiveLife</td></tr>
+			<tr><td>Gelato Spot</td><td>Food</td></tr>
+			<tr><td>QuikTrip</td><td>Food</td></tr>
+
+		</table>
+	</td></tr>	
+  </tbody>	
+</table>
+
+<h4 align="left">Example User 2:</h4>
+<table border="0" cellpadding=5 cellspacing=0 width="700" style="border:1px solid black;">
+  <thead>
+    <tr style="text-align: left;" bgcolor="#99FF99">
+      <th>Business Name:</th>
+	  <th>Review Stars:</th>
+	  <th>Review Category Label:</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="text-align: left;">
+      <td>Urban Yoga</td>
+	  <td>5</td>
+	  <td>ActiveLife</td>
+    </tr>
+	<tr style="text-align: left;" bgcolor="#99FF99">
+		<th colspan="3">Review Text:</th>
+	</tr>
+	
+	<tr>
+		<td colspan="3"> Urban Yoga is a great mix of what every yogi/yogini is looking for at one time or another:  Great Instructors (Kate, Katie, Kat, Mary Bruce,etc.), great products, calming environment, massage therapist on-site, awesome location, and so much more.  In fact, I'm attending Kate's class today at 4:30pm!<br><br>
+
+I often read reviews of someone that is "trying yoga for the first-time" and can empathize with them.  It is daunting to go to a new place, feel as though you are starting at the beginning and all the while, your mind CANNOT turn off (Did I lock my car?  I'm hungry.  I like her outfit.). <br><br> 
+
+Urban Yoga is a great place for a newbie or yoga practitioner with years of experience.  I've only been practicing intentionally for about 3 years and continue to learn and experience it.  Yoga is a practice, not a perfect.<br><br>  
+
+The most important part of it?  Show Up, Be Present, Do The Work.
+		</td>
+	</tr>
+	<tr style="text-align: left;" bgcolor="#CACAFF">
+	<th>Sentiment Classifier ( probability ):</th>
+	<th colspan="3">Category Classifier ( probability ):</th>
+	</tr>
+	<tr style="text-align: left;">
+	<td>
+		<table border="0" cellpadding=5 cellspacing=0><tr style="text-align: center;">
+			<td>Negative</td><td>Positive</td></tr>
+			<tr style="text-align: center;">
+			<td>0.01</td><td>0.99</td></tr>
+		</table>
+	</td>
+	<td colspan="2">
+		<table border="0" cellpadding=5 cellspacing=0><tr style="text-align: center;">
+			<td>Restaurants</td><td>Food</td><td>Shopping</td><td>BeautyandSpas</td><td bgcolor="#FFC848">ActiveLife</td></tr>
+			<tr style="text-align: center;">
+			<td>0.01</td><td>0.02</td><td>0.01</td><td>0.12</td><td bgcolor="#FFC848">0.84</td></tr>
+		</table>
+		</td>
+	</tr>
+	<tr style="text-align: left;" bgcolor="#CACAFF">
+		<th colspan="3">Recommendations:</th>
+	</tr>
+	<tr style="text-align: left;"><td colspan="3">
+		<table border="0" cellpadding=5 cellspacing=0>
+			<tr  style="text-align: left;"><th>Business Name</th><th>Category</th></tr>
+			<tr><td>LifePower at Pima Crossing</td><td>ActiveLife</td></tr>
+			<tr><td>True Food Kitchen</td><td>Restaurants</td></tr>
+			<tr><td>IKEA</td><td>Shopping</td></tr>
+			<tr><td>Sage Organic Skin Care</td><td>BeautyandSpas</td></tr>
+			<tr><td>Macy's</td><td>Shopping</td></tr>
+			<tr><td>Paperjoy</td><td>Shopping</td></tr>
+		</table>
+	</td></tr>	
+  </tbody>	
+</table>
+
+<p align="left"><b>Future work:</b> In the future, I would like to incorparate other features to my model including geopositioning data, other business attributes, user check-in history, among others. This Yelp data set is very rich and can be explored in a number of ways to produce business insight. 
+</p>
+
+<H3 align="left">Below are some interesting characteristics of the data:</H3>
+
+<p align="left"><b>Figure 1.</b>  The number of words per review (after stemming using NLTK) as a function of the star rating. We can see negative reviews tend to be longer and go into detail into the shortcomings of the business. However, the overall quantity of positive reviews is much higher, since people are much more willing to offer praise for a business they like. </p>
+<img src="word_count.png">
+
+<p align="left"><tab><b>Figure 2.</b> I wanted to understand whether the average word length was different as a function of star rating. Below we can see there is not much variation across the different star ratings.</p>
+<img src="star_rating.png">
+
+<p align="left"><b>Figure 3.</b> Same as Figure 2. We can see 3-letter words are the most common. The sets of 5 are the different star ratings.</p>
+<img src="word_length.png">
+
+<p align="left"><b>Figure 4.</b> For the category classifier, it is important to understand the amount of data in each class. Below is a list of the 22 primary categories in Yelp. As expected from the historical roots of Yelp, the reviews are dominated by the Restaurants category.</p>
+<img src="category_frequency.png">
+
+<p align="left"><b>Figure 5.</b> In order to improve classifier performance with TFIDF features, I found using reviews for businesses that had unique primary categories very useful. Below is a log plot of the cross listed and unique categories. </p>
+<img src="category_frequency_unique.png">
+</CENTER>
+</td></tr>
+</table>
+</CENTER>
+
+</BODY>
+
+</HTML>
