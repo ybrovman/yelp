@@ -9,3 +9,5 @@ jsonLoad.py: contains Python code to load json data to SQLite DB
 yelpReview.py: contains Python code to train and test classifiers and recommendation system
 
 catList.txt: contains list of Yelp business categories
+
+desc: contains html content for project description
